@@ -6,7 +6,14 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'Mini CRM';
+
+const storedTheme = localStorage.getItem('theme');
+if (storedTheme === 'dark') {
+    document.documentElement.classList.add('dark');
+} else if (storedTheme === 'light') {
+    document.documentElement.classList.remove('dark');
+}
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,

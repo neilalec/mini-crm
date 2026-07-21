@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class Lead extends Model
 {
@@ -18,8 +19,8 @@ class Lead extends Model
         'subject',
         'message',
         'status',
+        'chat_token',
         'quote_amount',
-        'quote_notes',
         'follow_up_date',
         'contacted_at',
     ];
@@ -41,5 +42,24 @@ class Lead extends Model
     public function notes(): HasMany
     {
         return $this->hasMany(LeadNote::class);
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(LeadMessage::class)->oldest();
+    }
+
+    public function activities(): HasMany
+    {
+        return $this->hasMany(LeadActivity::class)->oldest();
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (Lead $lead) {
+            if (! $lead->chat_token) {
+                $lead->chat_token = Str::random(40);
+            }
+        });
     }
 }

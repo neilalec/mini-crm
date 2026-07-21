@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\LeadChanged;
 use App\Models\Business;
+use App\Models\LeadActivity;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -27,8 +31,41 @@ class PublicEnquiryController extends Controller
             'message' => ['required', 'string'],
         ]);
 
-        $business->leads()->create($data);
+        $nextWorkingDay = Carbon::tomorrow();
+        while ($nextWorkingDay->isWeekend()) {
+            $nextWorkingDay->addDay();
+        }
+        $data['follow_up_date'] = $nextWorkingDay->toDateString();
 
-        return back()->with('success', 'Thanks, your enquiry has been sent.');
+        $lead = $business->leads()->create($data);
+        LeadActivity::record(
+            $lead,
+            'enquiry_received',
+            $lead->name,
+            $lead->message,
+            [
+                'email' => $lead->email,
+                'phone' => $lead->phone,
+                'subject' => $lead->subject,
+            ],
+        );
+        $chatLink = route('chat.show', $lead->chat_token);
+
+        Mail::raw("Thanks for your enquiry with {$business->name}.\n\nUse this secure link to continue chat about your enquiry:\n{$chatLink}\n\nYour submitted details:\nName: {$lead->name}\nEmail: {$lead->email}\nPhone: ".($lead->phone ?: 'N/A')."\nSubject: ".($lead->subject ?: 'N/A')."\nMessage: {$lead->message}", function ($message) use ($lead, $business) {
+            $message->to($lead->email, $lead->name)->subject("Your enquiry chat link - {$business->name}");
+        });
+
+        broadcast(new LeadChanged($business->id, 'created', [
+            'id' => $lead->id,
+            'name' => $lead->name,
+            'email' => $lead->email,
+            'status' => $lead->status,
+            'follow_up_date' => optional($lead->follow_up_date)->toDateString(),
+        ]));
+
+        return redirect()->route('chat.show', $lead->chat_token)->with([
+            'success' => 'Thank you for your enquiry. We have received it and will be in touch as soon as possible.',
+            'chat_notice' => "We emailed you a link which you can use to access this personal chat between you and {$business->name}.",
+        ]);
     }
 }

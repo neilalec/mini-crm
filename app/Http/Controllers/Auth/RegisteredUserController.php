@@ -35,6 +35,7 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'business_name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
@@ -47,8 +48,8 @@ class RegisteredUserController extends Controller
 
         Business::create([
             'user_id' => $user->id,
-            'name' => "{$user->name}'s Business",
-            'slug' => Str::slug($user->name).'-'.Str::lower(Str::random(5)),
+            'name' => $request->string('business_name')->toString(),
+            'slug' => Str::slug($request->string('business_name')->toString()).'-'.Str::lower(Str::random(5)),
         ]);
 
         event(new Registered($user));

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\TemplateChanged;
 use App\Models\ReplyTemplate;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,6 +21,7 @@ class ReplyTemplateController extends Controller
 
         return Inertia::render('Templates/Index', [
             'templates' => $business->replyTemplates()->latest()->get(),
+            'businessId' => $business->id,
         ]);
     }
 
@@ -32,7 +34,8 @@ class ReplyTemplateController extends Controller
 
         $business = $request->user()->business()->first();
         abort_unless($business, 403);
-        $business->replyTemplates()->create($data);
+        $template = $business->replyTemplates()->create($data);
+        broadcast(new TemplateChanged($business->id, 'created', $template->toArray()));
 
         return back();
     }
@@ -48,6 +51,7 @@ class ReplyTemplateController extends Controller
         ]);
 
         $template->update($data);
+        broadcast(new TemplateChanged($business->id, 'updated', $template->toArray()));
 
         return back();
     }
@@ -57,7 +61,9 @@ class ReplyTemplateController extends Controller
         $business = $request->user()->business()->first();
         abort_unless($business && $template->business_id === $business->id, 403);
 
+        $payload = ['id' => $template->id];
         $template->delete();
+        broadcast(new TemplateChanged($business->id, 'deleted', $payload));
 
         return back();
     }

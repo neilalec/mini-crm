@@ -21,6 +21,7 @@ class ProfileController extends Controller
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
+            'businessName' => optional($request->user()->business)->name,
         ]);
     }
 
@@ -36,6 +37,9 @@ class ProfileController extends Controller
         }
 
         $request->user()->save();
+        $request->user()->business()?->update([
+            'name' => $request->validated('business_name'),
+        ]);
 
         return Redirect::route('profile.edit');
     }
