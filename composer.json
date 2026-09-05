@@ -1,15 +1,15 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "neilalec/mini-crm",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "description": "A lightweight Laravel, Inertia and Vue CRM for tracking customer enquiries and follow-up activity.",
+    "keywords": ["laravel", "inertia", "vue", "crm", "portfolio"],
     "license": "MIT",
     "require": {
         "php": "^8.2",
         "inertiajs/inertia-laravel": "^2.0",
         "laravel/framework": "^12.0",
-        "laravel/reverb": "*",
+        "laravel/reverb": "^1.10",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
         "tightenco/ziggy": "^2.0"

@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\LeadChanged;
 use App\Events\LeadMessageCreated;
 use App\Models\Lead;
 use App\Models\LeadActivity;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
 class LeadMessageController extends Controller
@@ -51,7 +52,7 @@ class LeadMessageController extends Controller
         }
 
         broadcast(new LeadMessageCreated($lead->chat_token, $message->toArray()));
-        broadcast(new \App\Events\LeadChanged($lead->business_id, 'updated', [
+        broadcast(new LeadChanged($lead->business_id, 'updated', [
             'id' => $lead->id,
             'name' => $lead->name,
             'email' => $lead->email,

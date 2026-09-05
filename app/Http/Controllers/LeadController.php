@@ -59,6 +59,7 @@ class LeadController extends Controller
             ->withQueryString();
         $leads->through(function (Lead $lead) {
             $lead->follow_up_date = $lead->follow_up_date?->format('Y-m-d');
+
             return $lead;
         });
 

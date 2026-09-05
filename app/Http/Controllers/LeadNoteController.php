@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\LeadChanged;
+use App\Events\LeadNoteCreated;
 use App\Models\Lead;
 use App\Models\LeadActivity;
 use Illuminate\Http\RedirectResponse;
@@ -25,7 +25,7 @@ class LeadNoteController extends Controller
         ]);
         $note->load('user');
         LeadActivity::record($lead, 'note_added', $request->user()->name, $note->body);
-        broadcast(new \App\Events\LeadNoteCreated($lead->id, $note->toArray()));
+        broadcast(new LeadNoteCreated($lead->id, $note->toArray()));
 
         return back();
     }
