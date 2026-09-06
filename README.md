@@ -117,6 +117,6 @@ The lead workflow tests cover public enquiry creation, next-working-day follow-u
 
 ## Notes
 
-- This is a learning and portfolio project, not a production CRM.
+- Actively being developed, not a production CRM.
 - Mail and broadcasting use Laravel's normal configuration, so local behaviour depends on your `.env` settings.
 - The customer chat link is token-based for simplicity; a production application would need a fuller security review around access, expiry and audit requirements.
