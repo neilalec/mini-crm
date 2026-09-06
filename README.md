@@ -2,7 +2,7 @@
 
 Mini CRM is a lightweight Laravel and Vue application for capturing customer enquiries, tracking lead status and keeping follow-up activity in one place.
 
-I built this as a portfolio project to practise a PHP-first full-stack workflow with Laravel, Inertia, Vue, SQL migrations, authentication, validation and feature tests.
+I built this as a portfolio project to practice a PHP-first full-stack workflow with Laravel, Inertia, Vue, SQL migrations, authentication, validation and feature tests. Eventual commercial use is dependant on initial user feedback and therefore how useful it would be to small businesses.
 
 ## Features
 
